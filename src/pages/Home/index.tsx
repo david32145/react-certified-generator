@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useDrop, DragObjectWithType } from "react-dnd";
 
 import ImageDrop from "components/ImageDrop";
 import EditElement from "components/EditElement";
@@ -10,31 +9,9 @@ import { Container } from "./styles";
 import { useElements } from "elements";
 import { Text as TextProps } from "models";
 
-interface DropOptions extends DragObjectWithType {
-  data: TextProps
-}
-
 const HomePage: React.FC = () => {
-
   const { textList, addText, setText } = useElements();
   const [ currentTextId, setCurrentTextId ] = useState<string | null>(null);
-
-  const [, dropRef] = useDrop<DropOptions, any, any>({
-    accept: ["ELEMENT_TEXT"],
-    drop: (item, monitor) => {
-      const offset = monitor.getSourceClientOffset()
-      // const offset = monitor.getClientOffset()
-      const data = item.data;
-
-      data.position = {
-        x: offset?.x || data.position.x,
-        y: offset?.y || data.position.y
-      }
-
-
-      setText(data)
-    }
-  })
 
   function handleNewText() {
     addText({
@@ -57,7 +34,7 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <Container ref={dropRef}>
+    <Container>
       { currentTextId && <EditElement onChangeText={handleUpdateText} textId={currentTextId}/> }
       <Hotkeys onNewText={handleNewText} />
       <ImageDrop />

@@ -1,16 +1,13 @@
-import React from "react";
-import { useDrag } from "react-dnd";
+import React, { useRef } from "react";
+import Draggable, { DraggableEventHandler } from 'react-draggable';
 
 import styled from "styled-components";
 import { Text as TextProps } from "models";
+import { useElements } from "elements";
 
-const Container = styled.div<TextProps & {isDragging: boolean}>`
+const Container = styled.div<TextProps>`
   display: inline-block;
   position: absolute;
-  border: 2px solid transparent;
-  padding: 5px;
-  top: ${props => props.position.y}px;
-  left: ${props => props.position.x}px;
   background: transparent;
 
   cursor: grab;
@@ -20,25 +17,36 @@ const Container = styled.div<TextProps & {isDragging: boolean}>`
     color: ${props => props.color};
   }
 
-  opacity: ${props => props.isDragging ? 0 : 1};
-
   transition: border 0.1s;
-
-  :active {
-    border: 2px solid rgba(255, 255, 255, 0.25);
-  }
 `;
 
-export const Text: React.FC<TextProps & {onClick: (textId: string) => void}> = ({ children, onClick,...props }) => {
+export const Text: React.FC<TextProps & { onClick: (textId: string) => void }> = ({ children, onClick, ...props }) => {
+  const containerRef = useRef(null)
 
-  const [{ isDragging }, dragRef] = useDrag({
-    item: { type: 'ELEMENT_TEXT', data: props },
-    collect: monitor => ({ isDragging: monitor.isDragging() })
-  })
+  const { setText } = useElements()
+
+  const handleMoveFinish: DraggableEventHandler = (event, data) => {
+    const current = props
+    current.position = data
+    setText(current)
+  }
 
   return (
-    <Container onClick={() => onClick(props.id)} ref={dragRef} {...props} isDragging={isDragging}>
-      <h1>{children}</h1>
-    </Container>
+    <Draggable
+      ref={containerRef}
+      handle=".handle"
+      position={props.position}
+      scale={1}
+      onStop={handleMoveFinish}
+      >
+        <Container 
+          className="handle"
+          ref={containerRef}
+          onClick={() => onClick(props.id)} 
+          {...props} 
+        >
+          <h1>{children}</h1>
+        </Container>
+    </Draggable>
   );
 };
