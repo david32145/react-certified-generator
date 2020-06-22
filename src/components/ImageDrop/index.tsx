@@ -1,13 +1,25 @@
-import React,  { useCallback } from "react";
+import React,  { useEffect, useCallback, useState } from "react";
 
-import { useDropzone } from "react-dropzone";
+import { useDropzone, FileRejection, DropEvent } from "react-dropzone";
 
-import { Container } from "./styles";
+import { Container, ImageBackground } from "./styles";
 
 const ImageDrop: React.FC = () => {
 
-  const onDrop = useCallback(acceptedFiles => {
-    console.log(acceptedFiles)
+  const [ previewUrl, setPreviewUrl ] = useState<string>("")
+
+  useEffect(() => {
+    return () => {
+      URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl])
+
+  const onDrop = useCallback(<T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => {
+   if(acceptedFiles.length > 0) {
+     const [ file ] = acceptedFiles;
+     const url = URL.createObjectURL(file)
+     setPreviewUrl(url)
+   }
   }, [])
 
   const { 
@@ -18,20 +30,25 @@ const ImageDrop: React.FC = () => {
     isDragReject 
   } = useDropzone({ 
     onDrop,
-    accept: [".png", ".jpg", ".jpeg"]
+    accept: ["image/png", "image/jpg", "image/jpeg"],
+    multiple: false
   });
 
   return (
-    <Container {...getRootProps()}>
-      <input {...getInputProps()} />
-      {/* {
-        isDragActive ?
-          <p>Drop the files here ...</p> :
-          <p>Drag 'n' drop some files here, or click to select files</p>
-      } */}
-      <img src={require("assets/image-drop-icon.svg")} alt="Camera drop icon"/>
-      <h2>Drop your background here, or click and select.</h2>
-    </Container>
+    previewUrl.length > 0 
+      ? <ImageBackground src={previewUrl}/> 
+      : (
+        <Container 
+          isDragActive={isDragActive} 
+          isDragAccept={isDragAccept}
+          isDragReject={isDragReject}
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          <img src={require("assets/image-drop-icon.svg")} alt="Camera drop icon"/>
+          <h2>Drop your background here, or click and select.</h2>
+        </Container>
+      )
   );
 };
 
