@@ -1,5 +1,6 @@
 export {
   default as ElementsProvider, 
   useImageBackground,
-  useElements
+  useElements,
+  useTextById
 } from "./Provider"

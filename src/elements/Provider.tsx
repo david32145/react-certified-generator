@@ -1,4 +1,5 @@
 import React, { useState, useContext, useCallback } from "react";
+import { randomBytes } from "crypto";
 import producer from "immer"
 
 import Context, { ContextState, INITIAL_STATE } from "./context";
@@ -14,9 +15,12 @@ const ElementsProvider: React.FC = ({ children }) => {
     setState(newState)
   }, [state]);
 
-  const addText = useCallback((text: Text) => {
+  const addText = useCallback((text: Omit<Text, 'id'>) => {
     const newState = producer(state, draft => {
-      draft.texts.push(text)
+      draft.texts.push({
+        ...text,
+        id: randomBytes(8).toString()
+      })
     })
     setState(newState)
   }, [state])
@@ -24,7 +28,7 @@ const ElementsProvider: React.FC = ({ children }) => {
   const setText = useCallback((text: Text) => {
     const newState = producer(state, draft => {
       draft.texts = draft.texts.map(txt => {
-        if(txt.value === text.value) {
+        if(txt.id === text.id) {
           return text
         }
         return txt
@@ -51,6 +55,10 @@ export function useElements() {
   const addText = useContext(Context).addText;
   const setText = useContext(Context).setText
   return { textList, addText, setText };
+}
+
+export function useTextById(id: string): Text | undefined {
+  return useContext(Context).texts.find(txt => txt.id === id)
 }
 
 export default ElementsProvider;

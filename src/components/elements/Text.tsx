@@ -16,7 +16,8 @@ const Container = styled.div<TextProps & {isDragging: boolean}>`
   cursor: grab;
 
   h1 {
-    font-size: 16px;
+    font-size: ${props => props.fontSize}px;
+    color: ${props => props.color};
   }
 
   opacity: ${props => props.isDragging ? 0 : 1};
@@ -28,7 +29,7 @@ const Container = styled.div<TextProps & {isDragging: boolean}>`
   }
 `;
 
-export const Text: React.FC<TextProps> = ({ children, ...props }) => {
+export const Text: React.FC<TextProps & {onClick: (textId: string) => void}> = ({ children, onClick,...props }) => {
 
   const [{ isDragging }, dragRef] = useDrag({
     item: { type: 'ELEMENT_TEXT', data: props },
@@ -36,7 +37,7 @@ export const Text: React.FC<TextProps> = ({ children, ...props }) => {
   })
 
   return (
-    <Container ref={dragRef} {...props} isDragging={isDragging}>
+    <Container onClick={() => onClick(props.id)} ref={dragRef} {...props} isDragging={isDragging}>
       <h1>{children}</h1>
     </Container>
   );

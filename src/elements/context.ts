@@ -5,12 +5,12 @@ export interface ContextState {
   imageBackground: string
   texts: Text[]
   setImageBackground: (src: string) => void
-  addText: (text: Text) => void
+  addText: (text: Omit<Text, 'id'>) => void
   setText: (text: Text) => void
 }
 
 export const INITIAL_STATE: ContextState = {
-  imageBackground: "",
+  imageBackground: "https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-hero-00e10b1f.jpg",
   texts: [],
   setImageBackground: () => {},
   addText: () => {},
