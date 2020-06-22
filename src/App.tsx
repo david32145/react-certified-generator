@@ -1,11 +1,14 @@
 import React from 'react';
 import HomePage from 'pages/Home';
 import GlobalStyles from 'styles/global';
+import { ElementsProvider } from 'elements';
 
 function App() {
   return (
     <>
-      <HomePage />
+      <ElementsProvider>
+        <HomePage />
+      </ElementsProvider>
       <GlobalStyles />
     </>
   );

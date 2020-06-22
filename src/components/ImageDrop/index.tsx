@@ -1,26 +1,27 @@
-import React,  { useEffect, useCallback, useState } from "react";
+import React,  { useEffect, useCallback } from "react";
 
 import { useDropzone, FileRejection, DropEvent } from "react-dropzone";
 
 import { Container, ImageBackground } from "./styles";
+import { useImageBackground } from "elements";
 
 const ImageDrop: React.FC = () => {
 
-  const [ previewUrl, setPreviewUrl ] = useState<string>("")
+  const [src, setSrc] = useImageBackground()
 
   useEffect(() => {
     return () => {
-      URL.revokeObjectURL(previewUrl)
+      URL.revokeObjectURL(src)
     }
-  }, [previewUrl])
+  }, [src])
 
   const onDrop = useCallback(<T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => {
    if(acceptedFiles.length > 0) {
      const [ file ] = acceptedFiles;
      const url = URL.createObjectURL(file)
-     setPreviewUrl(url)
+     setSrc(url)
    }
-  }, [])
+  }, [setSrc])
 
   const { 
     getRootProps, 
@@ -35,8 +36,8 @@ const ImageDrop: React.FC = () => {
   });
 
   return (
-    previewUrl.length > 0 
-      ? <ImageBackground src={previewUrl}/> 
+    src.length > 0 
+      ? <ImageBackground src={src} /> 
       : (
         <Container 
           isDragActive={isDragActive} 
