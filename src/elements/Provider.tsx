@@ -21,8 +21,20 @@ const ElementsProvider: React.FC = ({ children }) => {
     setState(newState)
   }, [state])
 
+  const setText = useCallback((text: Text) => {
+    const newState = producer(state, draft => {
+      draft.texts = draft.texts.map(txt => {
+        if(txt.value === text.value) {
+          return text
+        }
+        return txt
+      })
+    })
+    setState(newState)
+  }, [state])
+
   return (
-    <Context.Provider value={{...state, setImageBackground, addText }}>
+    <Context.Provider value={{...state, setImageBackground, addText, setText }}>
       {children}
     </Context.Provider>
   );
@@ -37,7 +49,8 @@ export function useImageBackground(): [string, (src: string) => void] {
 export function useElements() {
   const textList = useContext(Context).texts;
   const addText = useContext(Context).addText;
-  return { textList, addText };
+  const setText = useContext(Context).setText
+  return { textList, addText, setText };
 }
 
 export default ElementsProvider;

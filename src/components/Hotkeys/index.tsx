@@ -1,9 +1,9 @@
 import React from "react";
 
-import HotkeysHelper from 'react-hot-keys';
+import HotkeysHelper, { OnKeyFun } from 'react-hot-keys';
 
 interface HotKeysProps {
-  onNewText: () => void
+  onNewText: OnKeyFun
 }
 
 const Hotkeys: React.FC<HotKeysProps> = ({
