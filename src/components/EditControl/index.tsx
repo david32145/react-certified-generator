@@ -50,7 +50,6 @@ const EditControl: React.FC<EditControlProps> = ({ id, onChangeControl }) => {
       acc[keyVal] = value[1].value
       return acc;
     }, {})
-    console.log(newFormData);
     formRef.current?.setData(newFormData);
   }, [control, props])
 
@@ -60,7 +59,7 @@ const EditControl: React.FC<EditControlProps> = ({ id, onChangeControl }) => {
       keys.forEach(key => {
         if(draft?.props[key]) {
           const property = draft.props[key]
-          if(typeof property.value === "number") {
+          if(!isNaN(Number(data[key]))) {
             property.value = Number(data[key])
           } else {
             property.value = data[key]
