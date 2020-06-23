@@ -8,13 +8,13 @@ export interface ControlProperty<T> {
   cssKey?: string
   value: T
   title: string
-  inputType: 'file' | 'text'
+  inputType: 'file' | 'text' | 'color'
   getValue: () => string
 }
 
 export interface ControlStyle {
+  width: ControlProperty<number | string>
   positionX: ControlProperty<number>
   positionY: ControlProperty<number>
-  width: ControlProperty<number | string>
   height: ControlProperty<number | string>
 }

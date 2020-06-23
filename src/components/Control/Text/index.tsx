@@ -37,7 +37,7 @@ export function createTextControl(): Omit<TextControl, 'id'> {
     color: {
       cssKey: 'color',
       getValue: getSimpleProperty,
-      inputType: 'text',
+      inputType: 'color',
       title: 'color',
       value: '#000'
     },

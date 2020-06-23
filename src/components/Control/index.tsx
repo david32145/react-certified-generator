@@ -1,7 +1,9 @@
 import React from "react";
+import producer from "immer";
 
 import Draggable, { DraggableEventHandler } from 'react-draggable';
 import { Control, ControlStyle } from "models";
+import { useElements } from "context";
 
 export interface ComponentProps {
   className: string
@@ -21,11 +23,14 @@ const ControlComponent: React.FC<ControlProps> = ({
   component: Component 
 }) => {
 
+  const { setControl } = useElements();
+
   const handleMoveFinish: DraggableEventHandler = (event, { x, y }) => {
-    // const current = props
-    // current.position = { x, y }
-    // setText(current)
-    console.log({x, y})
+    const newControl = producer(control, draft => {
+      draft.props.positionX.value = x
+      draft.props.positionY.value = y
+    })
+    setControl(newControl!)
   }
 
   return (
