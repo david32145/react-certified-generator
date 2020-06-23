@@ -3,7 +3,12 @@ import { randomBytes } from "crypto";
 import producer from "immer"
 
 import Context, { ContextState, INITIAL_STATE } from "./context";
-import { Text } from "models";
+import {
+  Control,
+  ControlStyle
+} from "models";
+
+type ControlInput = Control<ControlStyle>
 
 const ElementsProvider: React.FC = ({ children }) => {
   const [state, setState] = useState<ContextState>(INITIAL_STATE);
@@ -15,30 +20,35 @@ const ElementsProvider: React.FC = ({ children }) => {
     setState(newState)
   }, [state]);
 
-  const addText = useCallback((text: Omit<Text, 'id'>) => {
+  const addControl = useCallback((control: Omit<ControlInput, 'id'>) => {
     const newState = producer(state, draft => {
-      draft.texts.push({
-        ...text,
+      draft.controls.push({
+        ...control,
         id: randomBytes(8).toString()
       })
     })
     setState(newState)
   }, [state])
 
-  const setText = useCallback((text: Text) => {
+  const setControl = useCallback((control: ControlInput) => {
     const newState = producer(state, draft => {
-      draft.texts = draft.texts.map(txt => {
-        if(txt.id === text.id) {
-          return text
+      draft.controls = draft.controls.map(ctl => {
+        if(ctl.id === control.id) {
+          return control
         }
-        return txt
+        return ctl
       })
     })
     setState(newState)
   }, [state])
 
   return (
-    <Context.Provider value={{...state, setImageBackground, addText, setText }}>
+    <Context.Provider value={{
+      ...state, 
+      setImageBackground, 
+      addControl, 
+      setControl
+    }}>
       {children}
     </Context.Provider>
   );
@@ -51,14 +61,16 @@ export function useImageBackground(): [string, (src: string) => void] {
 }
 
 export function useElements() {
-  const textList = useContext(Context).texts;
-  const addText = useContext(Context).addText;
-  const setText = useContext(Context).setText
-  return { textList, addText, setText };
+  const controls = useContext(Context).controls;
+  const addControl = useContext(Context).addControl;
+  const setControl = useContext(Context).setControl;
+  return { controls, addControl, setControl };
 }
 
-export function useTextById(id: string): Text | undefined {
-  return useContext(Context).texts.find(txt => txt.id === id)
+export function useSelectControl(id: string): ControlInput | undefined {
+  return useContext(Context)
+    .controls
+    .find(ctl => ctl.id === id)
 }
 
 export default ElementsProvider;

@@ -1,9 +1,9 @@
 import React from "react";
 
 import Draggable, { DraggableEventHandler } from 'react-draggable';
-import { Control, ControlStyle } from "./utils";
+import { Control, ControlStyle } from "models";
 
-interface ComponentProps {
+export interface ComponentProps {
   className: string
   data: Control<ControlStyle>
   onControlClick: (controlId: string) => void
@@ -11,10 +11,15 @@ interface ComponentProps {
 
 interface ControlProps {
   control: Control<ControlStyle>
-  component: React.FC<ComponentProps>
+  component: React.FC<any>
+  onControlClick: (controlId: string) => void 
 }
 
-const ControlComponent: React.FC<ControlProps> = ({ control, component: Component }) => {
+const ControlComponent: React.FC<ControlProps> = ({ 
+  control, 
+  onControlClick,
+  component: Component 
+}) => {
 
   const handleMoveFinish: DraggableEventHandler = (event, { x, y }) => {
     // const current = props
@@ -23,24 +28,19 @@ const ControlComponent: React.FC<ControlProps> = ({ control, component: Componen
     console.log({x, y})
   }
 
-  const handleControlClick = (controlId: string): void => {
-    console.log(controlId)
-  }
-
   return (
     <Draggable
       handle=".handle"
       position={{
-        x: control.controlStyles.positionX.value,
-        y: control.controlStyles.positionY.value
+        x: control.props.positionX.value,
+        y: control.props.positionY.value
       }}
       scale={1}
       onStop={handleMoveFinish}
     >
-      <div />
       <Component
         className="handle"
-        onControlClick={handleControlClick} 
+        onControlClick={onControlClick} 
         data={control} />
     </Draggable>
   );

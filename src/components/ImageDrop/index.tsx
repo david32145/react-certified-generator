@@ -3,7 +3,7 @@ import React,  { useEffect, useCallback } from "react";
 import { useDropzone, FileRejection, DropEvent } from "react-dropzone";
 
 import { Container, ImageBackground } from "./styles";
-import { useImageBackground } from "elements";
+import { useImageBackground } from "context";
 
 const ImageDrop: React.FC = () => {
 

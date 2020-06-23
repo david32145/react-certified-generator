@@ -1,12 +1,20 @@
-export interface Text {
+export interface Control<T extends ControlStyle> {
   id: string
-  value: string
-  position: {
-    x: number
-    y: number
-  }
-  fontSize: number
-  color: string
-  width: number | string
-  height: number | string
+  type: 'Text'
+  props: T
+}
+
+export interface ControlProperty<T> {
+  cssKey?: string
+  value: T
+  title: string
+  inputType: 'file' | 'text'
+  getValue: () => string
+}
+
+export interface ControlStyle {
+  positionX: ControlProperty<number>
+  positionY: ControlProperty<number>
+  width: ControlProperty<number | string>
+  height: ControlProperty<number | string>
 }

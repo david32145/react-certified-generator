@@ -2,13 +2,18 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 import {
-  ControlProperty,
-  ControlStyle,
   Control,
+  ControlProperty,
+  ControlStyle
+} from "models";
+
+import {
   createControlStyle,
   getPixelValue,
   getSimpleProperty
 } from "../utils"
+
+import { ComponentProps } from "../index"
 
 export interface TextStyle extends ControlStyle {
   fontSize: ControlProperty<number>
@@ -16,14 +21,19 @@ export interface TextStyle extends ControlStyle {
   lineHeight: ControlProperty<number | string>
   textAlign: ControlProperty<string>
   color: ControlProperty<string>
+  value: ControlProperty<string>
 }
 
-export interface TextControl extends Control<TextStyle> {
-  value: string
-}
+export interface TextControl extends Control<TextStyle> {}
 
 export function createTextControl(): Omit<TextControl, 'id'> {
   const controlStyles = createControlStyle<TextStyle>({
+    value: {
+      getValue: getSimpleProperty,
+      inputType: 'text',
+      title: 'value',
+      value: 'New text'
+    },
     color: {
       cssKey: 'color',
       getValue: getSimpleProperty,
@@ -63,8 +73,7 @@ export function createTextControl(): Omit<TextControl, 'id'> {
 
   return {
     type: 'Text',
-    value: 'New text',
-    controlStyles,
+    props: controlStyles,
   }
 }
 
@@ -82,7 +91,7 @@ const Container = styled.h1<Omit<TextControl, 'value' | 'id' | 'type'>>`
       fontWeight,
       lineHeight,
       textAlign
-    } = props.controlStyles
+    } = props.props
     return css`
       width: ${width.getValue()};
       height: ${height.getValue()};
@@ -99,27 +108,29 @@ const Container = styled.h1<Omit<TextControl, 'value' | 'id' | 'type'>>`
   transition: border 0.1s;
 `;
 
-interface TextProps {
+interface TextProps extends ComponentProps {
   className: string
   data: TextControl
   onControlClick: (controlId: string) => void
 }
 
 
-export const Text: React.FC<TextProps> = ({ 
-  onControlClick, 
+export const Text: React.FC<TextProps> = ({
+  onControlClick,
   data,
-  children, 
-  ...props 
+  ...props
 }) => {
 
   return (
     <Container
       {...props}
       onClick={() => onControlClick(data.id)}
-      controlStyles={data.controlStyles}
+      props={data.props}
     >
-      <h1>{children}</h1>
+      {data.props.value.value}
     </Container>
   );
 };
+
+export default Text;
+

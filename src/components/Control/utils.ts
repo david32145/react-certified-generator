@@ -1,30 +1,13 @@
-export interface Control<T extends ControlStyle> {
-  id: string
-  type: 'Text'
-  controlStyles: T
-}
-
-export interface ControlProperty<T> {
-  cssKey: string
-  value: T
-  title: string
-  inputType: 'file' | 'text'
-  getValue: () => string
-}
-
-export interface ControlStyle {
-  positionX: ControlProperty<number>
-  positionY: ControlProperty<number>
-  width: ControlProperty<number | string>
-  height: ControlProperty<number | string>
-}
+import {
+  ControlStyle
+} from "models";
 
 export function getSimpleProperty(this: {value: any}): string {
   return String(this.value)
 }
 
 export function getPixelValue(this: {value: any}): string {
-  if(this.value instanceof String) {
+  if(typeof this.value === "string") {
     return String(this.value)
   }
   return String(this.value + "px")

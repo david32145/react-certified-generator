@@ -1,52 +1,45 @@
 import React, { useState } from "react";
 
 import ImageDrop from "components/ImageDrop";
-import EditElement from "components/EditElement";
+import EditControl from "components/EditControl";
 import Hotkeys from "components/Hotkeys";
-import { Text } from "components/elements";
+// import { Text } from "components/elements";
 
 import { Container } from "./styles";
-import { useElements } from "elements";
-import { Text as TextProps } from "models";
+import { useElements } from "context";
+// import { Text as TextProps } from "models";
+
+import Control from "components/Control"
+import TextControl, {createTextControl} from "components/Control/Text"
 
 const HomePage: React.FC = () => {
-  const { textList, addText, setText } = useElements();
-  const [ currentTextId, setCurrentTextId ] = useState<string | null>(null);
+  const { controls, addControl, setControl } = useElements();
+  const [ currentControlId, setCurrentControlId ] = useState<string | null>(null);
 
   function handleNewText() {
-    addText({
-      position: {
-        x: 70,
-        y: 30
-      },
-      value: "New text",
-      fontSize: 14,
-      color: "#000",
-      width: "auto",
-      height: "auto"
-    })
+    addControl(createTextControl())
   }
 
-  function handleUpdateText(text: TextProps) {
-    setText(text)
+  function handleUpdateText() {
+    // setText(text)
   }
 
-  function handleOpenEditElement(textId: string) {
-    setCurrentTextId(textId)
+  function handleOpenEditElement(controlId: string) {
+    setCurrentControlId(controlId)
   }
 
   return (
     <Container>
-      { currentTextId && <EditElement onChangeText={handleUpdateText} textId={currentTextId}/> }
+      { currentControlId && <EditControl onChangeControl={handleUpdateText} id={currentControlId}/> }
       <Hotkeys onNewText={handleNewText} />
       <ImageDrop />
-      {textList.map((text) => (
-        <Text 
-          onClick={handleOpenEditElement} 
-          key={text.id} {...text}
-        >
-          {text.value}
-        </Text>
+      {controls.map(control => (
+        <Control 
+          key={control.id}
+          component={TextControl} 
+          onControlClick={handleOpenEditElement}
+          control={control}
+          />
       ))}
     </Container>
   );

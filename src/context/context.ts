@@ -1,20 +1,25 @@
 import { createContext } from "react";
-import { Text } from "models";
+import {
+  Control,
+  ControlStyle
+} from "models";
+
+type ControlInput = Control<ControlStyle>
 
 export interface ContextState {
   imageBackground: string
-  texts: Text[]
+  controls: Control<ControlStyle> []
   setImageBackground: (src: string) => void
-  addText: (text: Omit<Text, 'id'>) => void
-  setText: (text: Text) => void
+  addControl: (control: Omit<ControlInput, 'id'>) => void
+  setControl: (control: ControlInput) => void
 }
 
 export const INITIAL_STATE: ContextState = {
   imageBackground: "https://htmlcolorcodes.com/assets/images/html-color-codes-color-tutorials-hero-00e10b1f.jpg",
-  texts: [],
+  controls: [],
   setImageBackground: () => {},
-  addText: () => {},
-  setText: () => {}
+  addControl: () => {},
+  setControl: () => {}
 };
 
 export default createContext<ContextState>(INITIAL_STATE);
