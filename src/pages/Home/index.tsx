@@ -21,7 +21,9 @@ const HomePage: React.FC = () => {
       },
       value: "New text",
       fontSize: 14,
-      color: "#000"
+      color: "#000",
+      width: "auto",
+      height: "auto"
     })
   }
 

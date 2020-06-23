@@ -25,7 +25,7 @@ export const Container = styled.div`
 
   .property-val {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
     grid-gap: 10px 10px;
 
     input {

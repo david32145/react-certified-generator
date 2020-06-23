@@ -22,12 +22,16 @@ const EditElement: React.FC<EditElementProps> = ({ textId, onChangeText }) => {
   const [positionX, setPositionX] = useState<number>(currentText?.position.x || 20);
   const [positionY, setPositionY] = useState<number>(currentText?.position.y || 20);
   const [color, setColor] = useState<string>(currentText?.color || "#000");
+  const [width, setWidth] = useState<number | string>(currentText?.width || "");
+  const [height, setHeight] = useState<number | string>(currentText?.height || "auto");
 
   useEffect(() => {
     setValue(currentText!.value)
     setFontSize(currentText!.fontSize)
     setPositionX(currentText!.position.x)
     setPositionY(currentText!.position.y)
+    setWidth(currentText!.width)
+    setHeight(currentText!.height)
     setColor(currentText!.color)
   }, [textId, currentText])
 
@@ -42,7 +46,9 @@ const EditElement: React.FC<EditElementProps> = ({ textId, onChangeText }) => {
           x: positionX,
           y: positionY
         },
-        color
+        color,
+        width,
+        height
       })
     }
   }
@@ -78,6 +84,20 @@ const EditElement: React.FC<EditElementProps> = ({ textId, onChangeText }) => {
             type="text"
             value={positionY}
             onChange={e => setPositionY(Number(e.target.value))}
+          />
+
+        <span>Width:</span>
+          <input
+            type="text"
+            value={width}
+            onChange={e => setWidth(Number(e.target.value))}
+          />
+
+        <span>Height:</span>
+          <input
+            type="text"
+            value={height}
+            onChange={e => setHeight(Number(e.target.value))}
           />
 
         <span>Color:</span>

@@ -7,4 +7,6 @@ export interface Text {
   }
   fontSize: number
   color: string
+  width: number | string
+  height: number | string
 }

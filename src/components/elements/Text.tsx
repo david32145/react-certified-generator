@@ -7,8 +7,11 @@ import { useElements } from "elements";
 
 const Container = styled.div<TextProps>`
   display: inline-block;
-  position: absolute;
+  position: fixed;
   background: transparent;
+
+  width: ${props => props.width === "auto" ? "auto" : props.width + "px"};
+  height: ${props => props.height === "auto" ? "auto" : props.height + "px"};
 
   cursor: grab;
 
@@ -25,9 +28,9 @@ export const Text: React.FC<TextProps & { onClick: (textId: string) => void }> =
 
   const { setText } = useElements()
 
-  const handleMoveFinish: DraggableEventHandler = (event, data) => {
+  const handleMoveFinish: DraggableEventHandler = (event, {x, y}) => {
     const current = props
-    current.position = data
+    current.position = {x, y}
     setText(current)
   }
 
