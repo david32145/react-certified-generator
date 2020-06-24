@@ -5,6 +5,9 @@ import Draggable, { DraggableEventHandler } from 'react-draggable';
 import { Control, ControlStyle } from "models";
 import { useElements } from "context";
 
+import TextControl from "components/Control/Text"
+import ImageControl from "components/Control/Image"
+
 export interface ComponentProps {
   className: string
   data: Control<ControlStyle>
@@ -13,14 +16,12 @@ export interface ComponentProps {
 
 interface ControlProps {
   control: Control<ControlStyle>
-  component: React.FC<any>
   onControlClick: (controlId: string) => void 
 }
 
 const ControlComponent: React.FC<ControlProps> = ({ 
   control, 
   onControlClick,
-  component: Component 
 }) => {
 
   const { setControl } = useElements();
@@ -32,6 +33,15 @@ const ControlComponent: React.FC<ControlProps> = ({
     })
     setControl(newControl!)
   }
+
+  let Component: React.FC<any> = TextControl
+  if(control.type === "Text") {
+    Component = TextControl
+  }
+  if(control.type === "File") {
+    Component = ImageControl
+  }
+  
 
   return (
     <Draggable

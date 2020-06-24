@@ -6,12 +6,11 @@ import { Form } from "@unform/web";
 import { useSelectControl, useElements } from "context"
 
 import { Container } from "./styles";
-import { Control, ControlStyle, ControlProperty } from "models";
+import { ControlStyle, ControlProperty } from "models";
 import { useField, FormHandles, SubmitHandler } from "@unform/core";
 
 interface EditControlProps {
   id: string,
-  onChangeControl: (control: Control<ControlStyle>) => void
 }
 
 interface FieldProps extends React.HTMLProps<HTMLInputElement> {
@@ -26,17 +25,33 @@ const Field: React.FC<FieldProps> = ({ name, ...props }) => {
   const {fieldName, registerField} = useField(name)
 
   useEffect(() => {
+    if(props.type === "file") {
+      registerField({
+        name: fieldName,
+        ref: inputRef.current,
+        getValue: (ref) => {
+          if(ref.files[0]) {
+            return URL.createObjectURL(ref.files[0])
+          } else {
+            return "http://api.adorable.io/avatars/256/abott@adorable.png"
+          }
+        },
+        setValue: () => {},
+        clearValue: () => {}
+      })
+      return;
+    }
     registerField({
       name: fieldName,
       ref: inputRef.current,
       path: 'value'
     })
-  }, [fieldName, registerField])
+  }, [fieldName, props.type, registerField])
 
-  return <input {...props} ref={inputRef} />
+  return <input {...props} ref={inputRef}/>
 }
 
-const EditControl: React.FC<EditControlProps> = ({ id, onChangeControl }) => {
+const EditControl: React.FC<EditControlProps> = ({ id }) => {
 
   const control = useSelectControl(id);
   const { setControl } = useElements();
@@ -82,7 +97,7 @@ const EditControl: React.FC<EditControlProps> = ({ id, onChangeControl }) => {
               <span>{value.title}:</span>
               <Field
                 name={key}
-                defaultValue={value.value}
+                defaultValue={value.inputType === "file" ? undefined : value.value}
                 type={value.inputType}
               />
             </React.Fragment>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  z-index: 50;
   
   position: fixed;
   right: 0;
@@ -25,6 +26,7 @@ export const Container = styled.div`
 
   .property-val {
     display: grid;
+    max-width: 300px;
     grid-template-columns: 1fr 2fr;
     grid-gap: 10px 10px;
 

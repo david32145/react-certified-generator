@@ -1,6 +1,6 @@
 export interface Control<T extends ControlStyle> {
   id: string
-  type: 'Text'
+  type: 'Text' | 'File'
   props: T
 }
 
