@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import producer from "immer";
 
 import { Form } from "@unform/web";
@@ -19,28 +19,53 @@ interface FieldProps extends React.HTMLProps<HTMLInputElement> {
 
 type FormData = Record<keyof ControlStyle, string>
 
+
+const FieldFile: React.FC<FieldProps> = ({ name, ...props }) => {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const { fieldName, registerField } = useField(name)
+
+  const [preview, setPreview] = useState<string>("http://api.adorable.io/avatars/256/abott@adorable.png")
+
+  useEffect(() => {
+    registerField({
+      name: fieldName,
+      ref: inputRef.current,
+      getValue: (ref) => {
+        return preview
+      },
+      setValue: () => { },
+      clearValue: () => { }
+    })
+  }, [fieldName, preview, registerField])
+
+  return (
+    <>
+      <button onClick={() => {
+        inputRef.current?.click()
+      }}>File</button>
+      <input 
+        {...props} 
+        style={{ display: 'none' }}
+        type="file" 
+        ref={inputRef} 
+        onChange={e => {
+          if(e.target.files?.length) {
+            URL.revokeObjectURL(preview)
+            setPreview(URL.createObjectURL(e.target.files[0]))
+          }
+        }}
+        /> 
+    </>
+  )
+}
+
 const Field: React.FC<FieldProps> = ({ name, ...props }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const {fieldName, registerField} = useField(name)
+  const { fieldName, registerField } = useField(name)
 
   useEffect(() => {
-    if(props.type === "file") {
-      registerField({
-        name: fieldName,
-        ref: inputRef.current,
-        getValue: (ref) => {
-          if(ref.files[0]) {
-            return URL.createObjectURL(ref.files[0])
-          } else {
-            return "http://api.adorable.io/avatars/256/abott@adorable.png"
-          }
-        },
-        setValue: () => {},
-        clearValue: () => {}
-      })
-      return;
-    }
     registerField({
       name: fieldName,
       ref: inputRef.current,
@@ -48,7 +73,7 @@ const Field: React.FC<FieldProps> = ({ name, ...props }) => {
     })
   }, [fieldName, props.type, registerField])
 
-  return <input {...props} ref={inputRef}/>
+  return <input {...props} ref={inputRef} />
 }
 
 const EditControl: React.FC<EditControlProps> = ({ id }) => {
@@ -58,7 +83,7 @@ const EditControl: React.FC<EditControlProps> = ({ id }) => {
   const formRef = useRef<FormHandles>(null);
 
   const props = Object.entries(control!.props) as [keyof ControlStyle, ControlProperty<string>][]
-  
+
   useEffect(() => {
     const newFormData = props.reduce<Record<string, string>>((acc, value) => {
       const keyVal = value[0] as unknown as string
@@ -72,9 +97,9 @@ const EditControl: React.FC<EditControlProps> = ({ id }) => {
     const keys = Object.keys(data) as unknown as (keyof ControlStyle)[]
     const newControl = producer(control, draft => {
       keys.forEach(key => {
-        if(draft?.props[key]) {
+        if (draft?.props[key]) {
           const property = draft.props[key]
-          if(!isNaN(Number(data[key]))) {
+          if (!isNaN(Number(data[key]))) {
             property.value = Number(data[key])
           } else {
             property.value = data[key]
@@ -95,11 +120,17 @@ const EditControl: React.FC<EditControlProps> = ({ id }) => {
           return (
             <React.Fragment key={value.title}>
               <span>{value.title}:</span>
-              <Field
-                name={key}
-                defaultValue={value.inputType === "file" ? undefined : value.value}
-                type={value.inputType}
-              />
+              {value.inputType === "file" ? (
+                <FieldFile
+                  name={key}
+                />
+              ) : (
+                  <Field
+                    name={key}
+                    defaultValue={value.value}
+                    type={value.inputType}
+                  />)
+              }
             </React.Fragment>
           )
         })}
